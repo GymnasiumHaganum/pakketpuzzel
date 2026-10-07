@@ -235,7 +235,7 @@ a.btn { text-decoration: none; display: inline-block; }
 .src a { color: var(--accent); font-weight: 700; }
 
 /* Export */
-.export { margin-top: 44px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 28px; align-items: start; background: var(--surface); border-radius: 24px; padding: 24px; scroll-margin-top: 16px; box-shadow: 0 10px 30px var(--shadow); border-top: 6px solid var(--accent); }
+.export { position: relative; width: min(1100px, 100%); max-height: calc(100vh - 32px); overflow: auto; margin: auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 28px; align-items: start; background: var(--surface); border-radius: 24px; padding: 24px; scroll-margin-top: 16px; box-shadow: 0 10px 30px var(--shadow); border-top: 6px solid var(--accent); }
 .export-intro { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .export h2 { font-size: 2rem; font-weight: 700; }
 .export p { margin: 0; color: var(--muted); max-width: 60ch; }
@@ -250,6 +250,14 @@ a.btn { text-decoration: none; display: inline-block; }
 .mail-head { display: flex; gap: 10px; padding: 10px 14px; border-bottom: 2px solid var(--line); font-size: 0.9rem; background: var(--accent-soft); flex-wrap: wrap; }
 .mail-head span { color: var(--muted); font-weight: 700; }
 .mail-body { margin: 0; padding: 14px; font: 0.84rem/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 460px; overflow: auto; }
+
+.modal-scrim { position: fixed; inset: 0; z-index: 12; background: var(--scrim); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); display: flex; padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px)); padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); overflow: auto; }
+.modal-close { position: absolute; top: 16px; right: 16px; z-index: 1; }
+.modal-scrim .export { padding-top: 64px; }
+@media (prefers-reduced-motion: no-preference) {
+  .modal-scrim:not([hidden]) .export { animation: modal-in .25s cubic-bezier(.3,1.4,.6,1); }
+  @keyframes modal-in { from { transform: translateY(14px) scale(.97); opacity: 0; } to { transform: none; opacity: 1; } }
+}
 
 #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 20; width: 100%; height: 100%; }
 
@@ -340,7 +348,9 @@ footer { margin-top: 36px; color: var(--muted); font-size: 0.82rem; max-width: 8
     <aside class="route" id="route" aria-live="polite"></aside>
   </div>
 
-  <section class="export" id="doorgeven" aria-labelledby="export-title">
+  <div class="modal-scrim" id="export-scrim" hidden>
+  <section class="export" id="doorgeven" role="dialog" aria-modal="true" aria-labelledby="export-title">
+    <button type="button" class="btn ghost small modal-close" id="export-close" aria-label="Sluiten">Sluiten</button>
     <div class="export-intro">
       <div class="eyebrow">Laatste stap</div>
       <h2 id="export-title">Keuze doorgeven</h2>
@@ -361,6 +371,7 @@ footer { margin-top: 36px; color: var(--muted); font-size: 0.82rem; max-width: 8
       <pre class="mail-body" id="mail-preview"></pre>
     </div>
   </section>
+  </div>
 
   <footer>
     Gebaseerd op de schema's "Profielkeuze klas 4" en "Definitieve vakkenkeuze voor klas 5 en 6" van gymnasium Haganum. Dit is geen officieel inschrijfformulier: bespreek je keuze met je mentor of decaan en lever hem in zoals de school dat vraagt. De vakinformatie is algemeen en komt uit de landelijke examenprogramma's voor het vwo. Je keuzes worden alleen in deze browser bewaard.
@@ -722,7 +733,23 @@ function renderExport() {
   st.className = 'export-state ' + (ready ? 'ready' : 'todo');
 }
 
+let exportReturn = null;
+function openExport() {
+  exportReturn = document.activeElement;
+  document.getElementById('export-scrim').hidden = false;
+  document.body.style.overflow = 'hidden';
+  const name = document.getElementById('student-name'), klas = document.getElementById('student-klas');
+  (!name.value.trim() ? name : !klas.value.trim() ? klas : document.getElementById('export-close')).focus();
+}
+function closeExport() {
+  document.getElementById('export-scrim').hidden = true;
+  document.body.style.overflow = '';
+  if (exportReturn && document.contains(exportReturn)) exportReturn.focus();
+}
+
 function initExport() {
+  document.getElementById('export-close').addEventListener('click', closeExport);
+  document.getElementById('export-scrim').addEventListener('click', e => { if (e.target.id === 'export-scrim') closeExport(); });
   const name = document.getElementById('student-name'), klas = document.getElementById('student-klas');
   name.value = state.student.name; klas.value = state.student.klas;
   const onInput = () => { state.student = { name: name.value, klas: klas.value }; save(); renderExport(); };
@@ -780,7 +807,7 @@ function renderRoute() {
   if (filledCount(5) === 10 && dropped.length) notes.push(el('li', {}, `Na klas 4 stop je met ${dropped.map(o => S[o].toLowerCase()).join(', ').replace(/, ([^,]*)$/, ' en $1')}.`));
 
   if (state[4].extras.length >= 2 || state[5].extras.length >= 2) notes.push(el('li', { class: 'warn' }, '2e extra vak alleen op advies van de school.'));
-  const exportBtn = el('a', { class: 'btn', href: '#doorgeven', id: 'to-export' }, 'Keuze doorgeven');
+  const exportBtn = el('button', { class: 'btn', type: 'button', id: 'to-export', onclick: openExport }, 'Keuze doorgeven');
   if (resetArmed) { clearTimeout(resetArmed); resetArmed = null; }
   const resetBtn = el('button', { class: 'btn ghost reset', type: 'button', id: 'reset-btn', onclick: onReset }, 'Begin opnieuw');
 
@@ -797,7 +824,7 @@ function renderRoute() {
   document.getElementById('bar').replaceChildren(
     el('span', {}, 'Klas 4 ', el('b', {}, `${filledCount(4)}/11`), ' · Klas 5 ', el('b', {}, `${filledCount(5)}/10`)),
     isComplete()
-      ? el('button', { class: 'btn small', type: 'button', onclick: () => document.getElementById('doorgeven').scrollIntoView({ behavior: 'smooth' }) }, 'Keuze doorgeven')
+      ? el('button', { class: 'btn small', type: 'button', onclick: openExport }, 'Keuze doorgeven')
       : el('button', { class: 'btn small', type: 'button', onclick: () => document.getElementById('route').scrollIntoView({ behavior: 'smooth' }) }, 'Bekijk route'));
 }
 
@@ -829,7 +856,11 @@ function closeInfo() {
   if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
 }
 document.getElementById('scrim').addEventListener('click', e => { if (e.target.id === 'scrim') closeInfo(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.getElementById('scrim').hidden) closeInfo(); });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (!document.getElementById('scrim').hidden) closeInfo();
+  else if (!document.getElementById('export-scrim').hidden) closeExport();
+});
 
 let wasComplete = null;
 function render() {

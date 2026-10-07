@@ -35,7 +35,7 @@ Licht of donker thema volgt automatisch het apparaat. Bovenaan de pagina kan de 
 
 Klas 5 wordt automatisch ingevuld met de keuzes uit klas 4. Wat de leerling in klas 5 zelf aanpast, blijft staan. De knop "Zet terug naar klas 4" laat alles weer de keuzes uit klas 4 volgen.
 
-Onder "Keuze doorgeven" vult de leerling naam en klas in. Daarna kan die de keuze als nette mail openen in het eigen mailprogramma (via een `mailto:`-link), of de tekst kopiëren en zelf in een mail plakken. Zet het adres van de decaan in de constante `MAIL_TO` in `index.html`; is die leeg, dan vult de leerling het adres zelf in.
+Via de knop "Keuze doorgeven" opent een pop-up waarin de leerling naam en klas invult. Daarna kan die de keuze als nette mail openen in het eigen mailprogramma (via een `mailto:`-link), of de tekst kopiëren en zelf in een mail plakken. Zet het adres van de decaan in de constante `MAIL_TO` in `index.html`; is die leeg, dan vult de leerling het adres zelf in.
 
 ## Bronnen
 
