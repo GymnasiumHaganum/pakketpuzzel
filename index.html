@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Profielkeuze klas 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: profile picker on top; builder (left) mirrors the school's colour-banded schema for klas 4, then klas 5-6;
+   sticky route card (right) compares both years subject by subject */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --fg: #1b2230;
+  --muted: #5d6676;
+  --line: #dde1e8;
+  --accent: #1f4fd1;
+  --accent-ink: #ffffff;
+  --accent-soft: #e6ecfb;
+  --sec-common: #e3e5ea;
+  --sec-req: #fbe7a6;
+  --sec-choice: #cfe8c4;
+  --sec-free: #d3e3f5;
+  --sec-extra: #f6d2d4;
+  --ok: #1d7a46;
+  --warn: #a35a00;
+  --bad: #b3261e;
+  --chip-bg: #ffffff;
+  --chip-off: #9aa1ad;
+  --scrim: rgba(15, 20, 30, 0.45);
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151b; --surface: #1a1e26; --fg: #e8ebf1; --muted: #a0a8b6; --line: #2d333e;
+    --accent: #7ea2ff; --accent-ink: #0d1220; --accent-soft: #222c44;
+    --sec-common: #2a2e36; --sec-req: #4a3d12; --sec-choice: #22402a; --sec-free: #1f3550; --sec-extra: #4a2428;
+    --ok: #6fd39a; --warn: #f0b45a; --bad: #ff8a80; --chip-bg: #222731; --chip-off: #5f6672; --scrim: rgba(0,0,0,0.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12151b; --surface: #1a1e26; --fg: #e8ebf1; --muted: #a0a8b6; --line: #2d333e;
+  --accent: #7ea2ff; --accent-ink: #0d1220; --accent-soft: #222c44;
+  --sec-common: #2a2e36; --sec-req: #4a3d12; --sec-choice: #22402a; --sec-free: #1f3550; --sec-extra: #4a2428;
+  --ok: #6fd39a; --warn: #f0b45a; --bad: #ff8a80; --chip-bg: #222731; --chip-off: #5f6672; --scrim: rgba(0,0,0,0.6);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 96px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+.lede { color: var(--muted); max-width: 66ch; margin: 10px 0 0; }
+.eyebrow { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* Profile picker */
+.profiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 28px; }
+.profile {
+  text-align: left; cursor: pointer; background: var(--surface); border: 2px solid var(--line); border-radius: 10px;
+  padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; min-width: 0;
+}
+.profile:hover { border-color: var(--muted); }
+.profile .code { font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; line-height: 1; }
+.profile .name { font-size: 0.92rem; color: var(--muted); }
+.profile[aria-pressed="true"] { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
+.profile[aria-pressed="true"] .name { color: var(--accent-ink); opacity: 0.85; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 28px; margin-top: 28px; align-items: start; }
+.builder { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+/* Year headers */
+.year { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+.year:first-child { margin-top: 0; }
+.year h2 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.01em; }
+.year p { margin: 4px 0 0; color: var(--muted); font-size: 0.92rem; max-width: 62ch; }
+.year .tally { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.year-text { min-width: 0; }
+.callout { background: var(--accent-soft); border-radius: 10px; padding: 12px 16px; font-size: 0.92rem; display: flex; gap: 12px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+.callout p { margin: 0; min-width: 0; flex: 1 1 280px; }
+
+/* Schema sections */
+.section { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 16px; }
+.section-head h3 { font-size: 1rem; font-weight: 600; }
+.section-head .n { font-size: 0.85rem; font-variant-numeric: tabular-nums; opacity: 0.75; white-space: nowrap; }
+.s-common .section-head { background: var(--sec-common); }
+.s-req .section-head { background: var(--sec-req); }
+.s-choice .section-head { background: var(--sec-choice); }
+.s-free .section-head { background: var(--sec-free); }
+.s-extra .section-head { background: var(--sec-extra); }
+.slot { padding: 11px 16px; display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 12px; align-items: start; border-top: 1px solid var(--line); }
+.slot:first-child { border-top: 0; }
+.slot-label { font-size: 0.9rem; color: var(--muted); padding-top: 6px; }
+.slot-body { min-width: 0; }
+.hint { font-size: 0.82rem; color: var(--muted); margin: 0; padding: 0 16px 12px; }
+.slot .hint { padding: 8px 0 0; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.opt { display: inline-flex; border: 1.5px solid var(--line); border-radius: 999px; background: var(--chip-bg); overflow: hidden; }
+.opt:hover:has(.chip:not(:disabled)) { border-color: var(--accent); }
+.chip { cursor: pointer; background: transparent; border: 0; padding: 5px 6px 5px 13px; font-size: 0.92rem; }
+.info { cursor: pointer; background: transparent; border: 0; border-left: 1px solid var(--line); padding: 0 10px 0 8px; font-size: 0.78rem; font-weight: 700; color: var(--muted); font-family: var(--font-display); }
+.info:hover { color: var(--accent); }
+.opt.on { background: var(--accent); border-color: var(--accent); }
+.opt.on .chip { color: var(--accent-ink); font-weight: 700; }
+.opt.on .info { color: var(--accent-ink); border-left-color: color-mix(in srgb, var(--accent-ink) 35%, transparent); }
+.opt.off { border-style: dashed; }
+.opt.off .chip { cursor: not-allowed; color: var(--chip-off); }
+.fixed { display: inline-flex; align-items: center; gap: 8px; padding-top: 3px; font-weight: 700; }
+.fixed small { font-weight: 400; color: var(--muted); }
+.fixed .info { border: 1.5px solid var(--line); border-radius: 999px; padding: 1px 8px; }
+
+/* Route card */
+.route { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; max-height: calc(100vh - 32px); overflow: auto; }
+.route h2 { font-size: 1.3rem; font-weight: 800; }
+.tallies { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tally-box { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.tally-box .lbl { font-size: 0.8rem; color: var(--muted); font-weight: 700; }
+.tally-box .num { font-family: var(--font-display); font-size: 1.9rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.tally-box .num small { font-size: 0.95rem; color: var(--muted); font-weight: 600; }
+.meter { display: grid; gap: 2px; }
+.meter span { height: 6px; border-radius: 2px; background: var(--line); }
+.meter span.on { background: var(--accent); }
+.pill { align-self: start; font-size: 0.75rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; border: 1.5px solid currentColor; }
+.pill.ok { color: var(--ok); } .pill.todo { color: var(--warn); }
+
+.table-wrap { overflow-x: auto; }
+table.cmp { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.cmp th { text-align: left; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; padding: 0 6px 6px; border-bottom: 1px solid var(--line); }
+.cmp th.c, .cmp td.c { text-align: center; width: 54px; }
+.cmp td { padding: 5px 6px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.cmp tr:last-child td { border-bottom: 0; }
+.cmp .subj { background: none; border: 0; padding: 0; cursor: pointer; text-align: left; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+.cmp .subj:hover { text-decoration-color: var(--accent); }
+.cmp .tag { display: block; font-size: 0.74rem; font-weight: 700; }
+.tag.drop { color: var(--bad); } .tag.new { color: var(--ok); } .tag.extra { color: var(--muted); }
+.mark { display: inline-block; width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--line); vertical-align: middle; }
+.mark.none { border: 0; width: auto; height: auto; color: var(--chip-off); }
+.mark.common { background: var(--sec-common); } .mark.req { background: var(--sec-req); } .mark.choice { background: var(--sec-choice); }
+.mark.free { background: var(--sec-free); } .mark.extra { background: var(--sec-extra); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 0.78rem; color: var(--muted); }
+.legend span { display: inline-flex; gap: 5px; align-items: center; }
+.notes { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 0.85rem; color: var(--muted); }
+.notes li.warn { color: var(--warn); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { font-weight: 700; font-size: 0.9rem; cursor: pointer; border-radius: 8px; padding: 8px 14px; border: 1.5px solid var(--accent); background: var(--accent); color: var(--accent-ink); }
+.btn.ghost { background: transparent; color: var(--fg); border-color: var(--line); }
+.btn.small { padding: 6px 12px; font-size: 0.85rem; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.status { font-size: 0.85rem; color: var(--ok); min-height: 1.2em; }
+
+/* Mobile status bar */
+.bar { display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--surface); border-top: 1px solid var(--line); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); justify-content: space-between; align-items: center; gap: 10px; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.bar b { font-family: var(--font-display); }
+
+/* Info panel */
+.scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 10; display: flex; justify-content: flex-end; }
+.panel { background: var(--surface); width: min(460px, 100%); height: 100%; overflow: auto; padding: calc(20px + env(safe-area-inset-top, 0px)) 22px calc(24px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 14px; box-shadow: -8px 0 30px rgba(0,0,0,.15); }
+.panel-head { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+.panel h2 { font-size: 1.6rem; font-weight: 800; }
+.panel p { margin: 0; }
+.panel h3 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-family: var(--font-body); font-weight: 700; margin-bottom: 4px; }
+.panel ul { margin: 0; padding-left: 1.1em; }
+.facts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; font-size: 0.92rem; margin: 0; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; }
+.in-pkg { font-size: 0.85rem; background: var(--accent-soft); border-radius: 8px; padding: 8px 12px; }
+.src { font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; }
+.src a { color: var(--accent); }
+
+.profile { position: relative; padding-right: 64px; }
+.picon { display: inline-flex; color: var(--accent); }
+.picon svg { width: 100%; height: 100%; }
+.profile .picon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; }
+.profile[aria-pressed="true"] .picon { color: var(--accent-ink); }
+.route-head { display: flex; gap: 12px; align-items: center; }
+.route-head .picon { width: 36px; height: 36px; flex: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .profile .picon { transition: transform .2s; }
+  .profile:hover .picon { transform: translateY(-50%) rotate(-6deg) scale(1.08); }
+}
+@media (max-width: 640px) {
+  .profile { padding-right: 16px; }
+  .profile .picon { position: static; transform: none; width: 28px; height: 28px; margin-bottom: 6px; }
+  .profile:hover .picon { transform: none; }
+}
+.slot-label .auto { display: block; font-size: 0.72rem; font-weight: 700; color: var(--accent); }
+.opt.moves { border-style: dotted; border-color: var(--accent); }
+.warning { margin: 8px 0 0; font-size: 0.88rem; font-weight: 700; color: var(--warn); }
+a.btn { text-decoration: none; display: inline-block; }
+a.btn.disabled { opacity: 0.5; cursor: not-allowed; }
+
+.export { margin-top: 40px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 28px; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; scroll-margin-top: 16px; }
+.export-intro { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.export h2 { font-size: 1.6rem; font-weight: 800; }
+.export p { margin: 0; color: var(--muted); max-width: 60ch; }
+.fields { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 10px; }
+.fields label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; font-weight: 700; color: var(--muted); }
+.fields input { font: inherit; font-weight: 400; color: var(--fg); background: var(--bg); border: 1.5px solid var(--line); border-radius: 8px; padding: 8px 10px; min-width: 0; }
+.fields input:focus { border-color: var(--accent); outline: none; }
+.export p.export-state { font-weight: 700; font-size: 0.9rem; }
+.export p.export-state.todo { color: var(--warn); }
+.export p.export-state.ready { color: var(--ok); }
+.mail { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; min-width: 0; background: var(--bg); }
+.mail-head { display: flex; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 0.88rem; background: var(--surface); flex-wrap: wrap; }
+.mail-head span { color: var(--muted); }
+.mail-body { margin: 0; padding: 14px; font: 0.84rem/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 460px; overflow: auto; }
+@media (max-width: 960px) { .export { grid-template-columns: minmax(0, 1fr); } }
+
+footer { margin-top: 36px; color: var(--muted); font-size: 0.82rem; max-width: 80ch; }
+
+@media (max-width: 960px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .route { position: static; max-height: none; }
+  .bar { display: flex; }
+}
+@media (max-width: 640px) {
+  .profiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .slot { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .slot-label { padding-top: 0; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .opt, .profile, .chip { transition: background-color .12s, border-color .12s, color .12s; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Klas 3 → klas 4 → klas 5 en 6</div>
+    <h1>Stel je vakkenpakket samen</h1>
+    <p class="lede">Kies een profiel en maak je keuzes voor klas 4. Daarna kies je wat je in klas 5 en 6 houdt. Rechts zie je per vak wat doorloopt, wat afvalt en wat nieuw is. Klik op <b>i</b> bij een vak voor uitleg over dat vak.</p>
+  </header>
+
+  <div class="profiles" id="profiles" role="group" aria-label="Profiel"></div>
+
+  <div class="layout">
+    <div class="builder" id="builder"></div>
+    <aside class="route" id="route" aria-live="polite"></aside>
+  </div>
+
+  <section class="export" id="doorgeven" aria-labelledby="export-title">
+    <div class="export-intro">
+      <div class="eyebrow">Laatste stap</div>
+      <h2 id="export-title">Keuze doorgeven</h2>
+      <p>Je geeft je definitieve keuze per mail door. Vul je naam en klas in en open de mail in je mailprogramma, of kopieer de tekst en plak die in een nieuwe mail.</p>
+      <div class="fields">
+        <label for="student-name">Naam<input id="student-name" type="text" autocomplete="name" placeholder="Voor- en achternaam"></label>
+        <label for="student-klas">Klas<input id="student-klas" type="text" placeholder="bijv. 3B" maxlength="10"></label>
+      </div>
+      <p class="export-state todo" id="export-state"></p>
+      <div class="actions">
+        <a class="btn" id="mail-btn" href="#">Open in mailprogramma</a>
+        <button class="btn ghost" type="button" id="copy-btn">Kopieer tekst</button>
+      </div>
+      <div class="status" id="copy-status" aria-live="polite"></div>
+    </div>
+    <div class="mail">
+      <div class="mail-head"><span>Onderwerp</span><b id="mail-subject"></b></div>
+      <pre class="mail-body" id="mail-preview"></pre>
+    </div>
+  </section>
+
+  <footer>
+    Gebaseerd op de schema's "Profielkeuze klas 4" en "Definitieve vakkenkeuze voor klas 5 en 6" van gymnasium Haganum. Dit is geen officieel inschrijfformulier: bespreek je keuze met je mentor of decaan en lever hem in zoals de school dat vraagt. De vakinformatie is algemeen en komt uit de landelijke examenprogramma's voor het vwo. Je keuzes worden alleen in deze browser bewaard.
+  </footer>
+</div>
+
+<div class="bar" id="bar"></div>
+<div class="scrim" id="scrim" hidden></div>
+
+<script>
+const S = {
+  ne: 'Nederlands', en: 'Engels', la: 'Latijn', gr: 'Grieks', fa: 'Frans', du: 'Duits',
+  lo: 'Lichamelijke opvoeding', ml: 'Maatschappijleer + profielwerkstuk', gs: 'Geschiedenis', ec: 'Economie',
+  wa: 'Wiskunde A', wb: 'Wiskunde B', wc: 'Wiskunde C', wd: 'Wiskunde D', bi: 'Biologie', sk: 'Scheikunde',
+  na: 'Natuurkunde', ak: 'Aardrijkskunde', fi: 'Filosofie', kb: 'Kunst beeldend', kd: 'Kunst drama'
+};
+const ORDER = ['ne', 'en', 'la', 'gr', 'fa', 'du', 'ml', 'lo', 'gs', 'ec', 'ak', 'wa', 'wb', 'wc', 'wd', 'bi', 'sk', 'na', 'fi', 'kb', 'kd'];
+// "Vak naar keuze" list from the schema footnote; Wiskunde D only from klas 5
+const FREE4 = ['la', 'gr', 'du', 'fa', 'na', 'sk', 'bi', 'ak', 'gs', 'ec', 'fi', 'kb', 'kd'];
+const FREE5 = [...FREE4.slice(0, 7), 'wd', ...FREE4.slice(7)];
+const BETA = ['na', 'sk', 'bi', 'wd'];
+const TOTAL = { 4: 11, 5: 10 };
+const MAX_EXTRAS = 2;
+// Address the final choice is mailed to; leave empty to let the student fill it in
+const MAIL_TO = '';
+const MARK_LABEL = { common: 'Gemeenschappelijk', req: 'Verplicht profielvak', choice: 'Keuze profielvak', free: 'Vrije deel', extra: 'Extra vak' };
+
+// Background per subject: general facts from the national vwo examination programmes
+const INFO = {
+  ne: { about: 'Lezen, schrijven, spreken en argumenteren in het Nederlands, plus literatuur.', exam: 'Centraal examen (leesvaardigheid) en schoolexamen', topics: ['Leesvaardigheid en tekstanalyse', 'Schrijven en betogen', 'Mondelinge taalvaardigheid', 'Literatuurgeschiedenis en leeslijst'], next: 'Kernvak: telt mee in de kernvakkenregel (Nederlands, Engels, wiskunde). Voor elke vervolgopleiding van belang.' },
+  en: { about: 'Engelse taalvaardigheid op hoog niveau, met literatuur.', exam: 'Centraal examen (leesvaardigheid) en schoolexamen', topics: ['Leesvaardigheid', 'Luisteren, spreken en gesprekken voeren', 'Schrijven', 'Literatuur'], next: 'Kernvak. Veel universitaire opleidingen zijn (deels) Engelstalig.' },
+  la: { about: 'Latijnse teksten lezen, vertalen en interpreteren, met de cultuur van de Romeinse wereld (KCV).', exam: 'Centraal examen en schoolexamen', topics: ['Vertalen en interpreteren van originele teksten', 'Auteurs en genres (o.a. poëzie, geschiedschrijving)', 'Klassieke culturele vorming (KCV)', 'Doorwerking in latere kunst en literatuur'], next: 'Op het gymnasium is Latijn of Grieks verplicht. Handig bij rechten, geneeskunde (terminologie), taal en geschiedenis.' },
+  gr: { about: 'Oudgriekse teksten lezen, vertalen en interpreteren, met de cultuur van de Griekse wereld (KCV).', exam: 'Centraal examen en schoolexamen', topics: ['Vertalen en interpreteren van originele teksten', 'Epos, tragedie, filosofie en geschiedschrijving', 'Klassieke culturele vorming (KCV)', 'Doorwerking in latere kunst en denken'], next: 'Op het gymnasium is Latijn of Grieks verplicht. Sluit goed aan bij filosofie, theologie, geschiedenis en taalstudies.' },
+  fa: { about: 'Franse taalvaardigheid en literatuur.', exam: 'Centraal examen (leesvaardigheid) en schoolexamen', topics: ['Leesvaardigheid', 'Luisteren en spreken', 'Schrijven', 'Literatuur'], next: 'Nuttig voor talenstudies, internationale studies en rechten. In klas 5 is een moderne vreemde taal niet meer verplicht.' },
+  du: { about: 'Duitse taalvaardigheid en literatuur.', exam: 'Centraal examen (leesvaardigheid) en schoolexamen', topics: ['Leesvaardigheid', 'Luisteren en spreken', 'Schrijven', 'Literatuur'], next: 'Nuttig voor talenstudies, internationale studies en studeren in Duitsland. In klas 5 is een moderne vreemde taal niet meer verplicht.' },
+  lo: { about: 'Bewegen, sport en gezondheid, in praktijk en theorie.', exam: 'Alleen schoolexamen; je moet het afsluiten met "voldoende" of "goed"', topics: ['Spel, turnen, atletiek, bewegen op muziek', 'Samenwerken en regelen (scheidsrechter, organiseren)', 'Gezond bewegen'], next: 'Geen cijfer op je diploma, maar wel een voorwaarde om te slagen.' },
+  ml: { about: 'Maatschappijleer gaat over democratie, rechtsstaat, pluriforme samenleving en verzorgingsstaat. Het profielwerkstuk is een groot onderzoek in klas 6 binnen je profiel.', exam: 'Alleen schoolexamen. Samen vormen ze het combinatiecijfer.', topics: ['Rechtsstaat en politiek', 'Parlementaire democratie', 'Verzorgingsstaat', 'Pluriforme samenleving', 'Profielwerkstuk: eigen onderzoeksvraag uitwerken'], next: 'Het combinatiecijfer telt als één cijfer voor de uitslag. Geen onderdeel mag lager zijn dan een 4.' },
+  gs: { about: 'Het verleden begrijpen aan de hand van tien tijdvakken en historisch redeneren.', exam: 'Centraal examen en schoolexamen', topics: ['Tien tijdvakken met kenmerkende aspecten', 'Historische contexten (bijv. de Republiek, de Koude Oorlog)', 'Werken met bronnen', 'Historisch redeneren'], next: 'Belangrijk voor geschiedenis, rechten, politicologie, journalistiek en lerarenopleidingen.' },
+  ec: { about: 'Keuzes van huishoudens, bedrijven en overheid: markten, geld, risico en welvaart.', exam: 'Centraal examen en schoolexamen', topics: ['Vraag, aanbod en marktvormen', 'Ruilen over de tijd (sparen, lenen)', 'Risico en informatie', 'Welvaart, groei en conjunctuur', 'Internationale economie'], next: 'Handig voor economie, bedrijfskunde en econometrie (daar is vaak ook wiskunde B nodig).' },
+  ak: { about: 'De aarde als systeem en de samenhang tussen mens en omgeving, dichtbij en wereldwijd.', exam: 'Centraal examen en schoolexamen', topics: ['Wereld: globalisering', 'Aarde: klimaat, platentektoniek, landschappen', 'Gebieden: een ontwikkelingsland en Nederland', 'Leefomgeving en ruimtelijke ordening'], next: 'Sluit aan bij sociale geografie, planologie, aardwetenschappen en milieustudies.' },
+  wa: { about: 'Wiskunde toegepast op economie, natuur en samenleving, met nadruk op statistiek en kansrekening.', exam: 'Centraal examen en schoolexamen', topics: ['Algebra en tellen', 'Verbanden en functies', 'Veranderingen (afgeleide)', 'Statistiek en kansrekening'], next: 'Kernvak. Voldoende voor veel studies in economie, psychologie, gezondheid en sociale wetenschappen. Niet voor technische of exacte studies.' },
+  wb: { about: 'Abstracte wiskunde met functies, differentiëren, integreren en meetkunde.', exam: 'Centraal examen en schoolexamen', topics: ['Functies en grafieken', 'Differentiaal- en integraalrekening', 'Goniometrie', 'Vlakke meetkunde en vectoren'], next: 'Kernvak. Verplicht voor technische en exacte studies (bijv. TU, wiskunde, natuurkunde, econometrie). Voorwaarde voor wiskunde D.' },
+  wc: { about: 'Wiskunde voor het profiel Cultuur & Maatschappij, met aandacht voor patronen, vormen en statistiek.', exam: 'Centraal examen en schoolexamen', topics: ['Algebra en tellen', 'Verbanden', 'Data en statistiek', 'Vorm en ruimte'], next: 'Kernvak. Let op: veel studies (bijv. psychologie, economie) vragen wiskunde A of B. Kies je C, controleer dan de toelatingseisen.' },
+  wd: { about: 'Extra wiskunde naast wiskunde B, met onderwerpen die verder gaan dan het gewone programma.', exam: 'Alleen schoolexamen', topics: ['Complexe getallen', 'Kansrekening en statistiek (verdiept)', 'Meetkunde en bewijzen', 'Dynamische systemen'], next: 'Alleen te kiezen naast wiskunde B en pas vanaf klas 5. Goede voorbereiding op wiskunde, natuurkunde, informatica en technische studies.' },
+  bi: { about: 'Het leven van cel tot ecosysteem.', exam: 'Centraal examen en schoolexamen', topics: ['Cellen en moleculen', 'Erfelijkheid en evolutie', 'Fysiologie van de mens', 'Ecologie en duurzaamheid'], next: 'Nodig voor geneeskunde, biomedische wetenschappen, biologie en veel zorgopleidingen.' },
+  sk: { about: 'Stoffen, reacties en de chemie van materialen en leven.', exam: 'Centraal examen en schoolexamen', topics: ['Bouw van stoffen', 'Reacties, evenwichten en zuren/basen', 'Koolstofchemie', 'Chemische industrie en duurzaamheid'], next: 'Nodig voor geneeskunde, farmacie, scheikunde, life sciences en veel technische studies.' },
+  na: { about: 'Natuurwetten van beweging, energie, golven, elektriciteit en straling, met experimenten.', exam: 'Centraal examen en schoolexamen', topics: ['Mechanica en beweging', 'Elektriciteit en magnetisme', 'Golven en straling', 'Quantumwereld en astrofysica'], next: 'Nodig voor technische studies en natuurkunde. Ook geneeskunde vraagt natuurkunde.' },
+  fi: { about: 'Nadenken over kennis, ethiek, mens en samenleving aan de hand van filosofische teksten.', exam: 'Centraal examen en schoolexamen; het examenthema wisselt om de paar jaar', topics: ['Ethiek', 'Kennisleer en wetenschapsfilosofie', 'Antropologie (wat is de mens)', 'Sociale en politieke filosofie'], next: 'Goede training in argumenteren. Sluit aan bij filosofie, rechten, politicologie en geesteswetenschappen.' },
+  kb: { about: 'Zelf beeldend werk maken en kunst begrijpen in historische en culturele context.', exam: 'Centraal examen (kunst algemeen) en schoolexamen met praktijkwerk', topics: ['Eigen werk ontwerpen en maken', 'Reflecteren op werkproces', 'Kunstgeschiedenis en kunstbeschouwing'], next: 'Voorbereiding op kunstacademie, architectuur, kunstgeschiedenis of ontwerpopleidingen.' },
+  kd: { about: 'Spelen, maken en analyseren van theater, in combinatie met kunstgeschiedenis.', exam: 'Centraal examen (kunst algemeen) en schoolexamen met praktijkwerk', topics: ['Spelen en regisseren', 'Voorstellingen maken', 'Theateranalyse en kunstgeschiedenis'], next: 'Voorbereiding op theater- en mediaopleidingen en kunstwetenschappen.' }
+};
+
+const WI4 = { id: 'wi', label: 'Wiskunde', options: ['wa', 'wb'] };
+// Line icons per profile (24x24, stroke = currentColor): column, rising chart, heart with pulse, atom
+const ICONS = {
+  CM: '<path d="M3 21h18M5 18h14M4 8h16L12 3 4 8z"/><path d="M6.5 8v10M10 8v10M14 8v10M17.5 8v10"/>',
+  EM: '<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-7"/><path d="M15 7h5v5"/>',
+  NG: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/><path d="M5.5 12H9l1.5-3 2.5 6 1.5-3h4"/>',
+  NT: '<circle cx="12" cy="12" r="1.6"/><ellipse cx="12" cy="12" rx="9.5" ry="3.8"/><ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9.5" ry="3.8" transform="rotate(-60 12 12)"/>'
+};
+function icon(code) {
+  const span = el('span', { class: 'picon', 'aria-hidden': 'true' });
+  span.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[code]}</svg>`;
+  return span;
+}
+
+const PROFILES = {
+  CM: { name: 'Cultuur & Maatschappij',
+    req: [{ id: 'p1', label: 'Profielvak', fixed: 'gs' }], wi5: ['wc', 'wa', 'wb'],
+    choice: [{ id: 'k1', label: 'Vak 1', options: ['ec', 'ak'] }, { id: 'k2', label: 'Vak 2', options: ['fi', 'fa', 'du', 'la', 'gr', 'kb', 'kd'] }],
+    free4: [{ id: 'v1', label: 'Vak 1', options: FREE4, betaLimit: true }, { id: 'v2', label: 'Vak 2', options: FREE4, betaLimit: true }] },
+  EM: { name: 'Economie & Maatschappij',
+    req: [{ id: 'p1', label: 'Profielvak', fixed: 'gs' }, { id: 'p2', label: 'Profielvak', fixed: 'ec' }], wi5: ['wa', 'wb'],
+    choice: [{ id: 'k1', label: 'Vak 1', options: ['fa', 'du', 'ak'] }],
+    free4: [{ id: 'v1', label: 'Vak 1', options: FREE4, betaLimit: true }, { id: 'v2', label: 'Vak 2', options: FREE4, betaLimit: true }] },
+  NG: { name: 'Natuur & Gezondheid',
+    req: [{ id: 'p1', label: 'Profielvak', fixed: 'bi' }, { id: 'p2', label: 'Profielvak', fixed: 'sk' }], wi5: ['wa', 'wb'],
+    choice: [{ id: 'k1', label: 'Vak 1', options: ['na', 'ak'] }],
+    free4: [{ id: 'v1', label: 'Vak 1', options: ['fi', 'gs'] }, { id: 'v2', label: 'Vak 2', options: FREE4 }] },
+  NT: { name: 'Natuur & Techniek',
+    req: [{ id: 'p1', label: 'Profielvak', fixed: 'sk' }, { id: 'p2', label: 'Profielvak', fixed: 'na' }], wiFixed: 'wb',
+    choice: [{ id: 'k1', label: 'Vak 1', options: ['bi', 'wd'] }], choice4: [{ id: 'k1', label: 'Vak 1', fixed: 'bi', note: 'Wiskunde D kun je pas in klas 5 kiezen.' }],
+    free4: [{ id: 'v1', label: 'Vak 1', options: ['fi', 'gs'] }, { id: 'v2', label: 'Vak 2', options: FREE4 }] }
+};
+
+function groupsFor(code, year) {
+  const p = PROFILES[code];
+  const wi = p.wiFixed ? { id: 'wi', label: 'Wiskunde', fixed: p.wiFixed } : (year === 4 ? WI4 : { id: 'wi', label: 'Wiskunde', options: p.wi5 });
+  const common = year === 4
+    ? [{ id: 'ne', label: 'Nederlands', fixed: 'ne' }, { id: 'en', label: 'Engels', fixed: 'en' },
+       { id: 'klas', label: 'Klassieke taal', options: ['la', 'gr'] }, { id: 'mvt', label: 'Moderne taal', options: ['fa', 'du'] },
+       { id: 'lo', label: 'LO', fixed: 'lo' }]
+    : [{ id: 'ne', label: 'Nederlands', fixed: 'ne' }, { id: 'en', label: 'Engels', fixed: 'en' },
+       { id: 'klas', label: 'Klassieke taal', options: ['la', 'gr'] }, { id: 'ml', label: 'Combinatievak', fixed: 'ml' },
+       { id: 'lo', label: 'LO', fixed: 'lo' }];
+  const choice = year === 4 && p.choice4 ? p.choice4 : p.choice;
+  const free = year === 4 ? p.free4 : [{ id: 'v1', label: 'Examenvak', options: FREE5 }];
+  return [
+    { key: 'common', title: 'Gemeenschappelijk deel', slots: common },
+    { key: 'req', title: 'Verplichte profielvakken', slots: [...p.req, wi] },
+    { key: 'choice', title: choice.length > 1 ? 'Keuze profielvakken' : 'Keuze profielvak', slots: choice },
+    { key: 'free', title: 'Vrije deel', betaLimit: year === 4 && free.some(s => s.betaLimit), slots: free }
+  ];
+}
+
+const STORE = 'profielkeuze-route-v2';
+// manual: klas 5 slots the student set or cleared; the rest follow klas 4 automatically
+const blank = () => ({ picks: {}, extras: [], manual: {}, manualExtras: false });
+let state = { profile: 'NT', student: { name: '', klas: '' }, 4: blank(), 5: blank() };
+try {
+  const saved = JSON.parse(localStorage.getItem(STORE) || 'null');
+  if (saved && PROFILES[saved.profile]) state = {
+    profile: saved.profile, student: { name: '', klas: '', ...saved.student },
+    4: { ...blank(), ...saved[4] }, 5: { ...blank(), ...saved[5] }
+  };
+} catch (e) { /* storage unavailable */ }
+function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
+
+const slotsOf = year => groupsFor(state.profile, year).flatMap(g => g.slots.map(s => ({ ...s, group: g.key })));
+const valueOf = (year, s) => s.fixed || state[year].picks[s.id] || null;
+const setOf = (year, withExtras = true) => new Set([...slotsOf(year).map(s => valueOf(year, s)).filter(Boolean), ...(withExtras ? state[year].extras : [])]);
+
+// Hierarchy of the schema: a pick in a higher section takes the subject away from a lower one
+const RANK = { common: 0, req: 1, choice: 2, free: 3 };
+
+// Where would picking o in slot s take the subject from? Returns a label or null.
+function movesFrom(year, o, s) {
+  const t = slotsOf(year).find(t => t.id !== s.id && !t.fixed && valueOf(year, t) === o && RANK[t.group] > RANK[s.group]);
+  if (t) return `Verplaatst ${S[o]} hierheen (nu bij ${MARK_LABEL[t.group].toLowerCase()})`;
+  if (state[year].extras.includes(o)) return `Verplaatst ${S[o]} hierheen (nu extra vak)`;
+  return null;
+}
+
+// Why can't subject o be picked in slot s of this year (s null = extra)? Returns a reason or null.
+function blockReason(year, o, s) {
+  for (const t of slotsOf(year)) {
+    if (s && t.id === s.id) continue;
+    if (valueOf(year, t) !== o) continue;
+    if (!s || t.fixed || RANK[t.group] <= RANK[s.group]) return 'Zit al in je pakket';
+  }
+  if (!s && !state[year].extras.includes(o) && state[year].extras.length >= MAX_EXTRAS) return `Maximaal ${MAX_EXTRAS} extra vakken`;
+  const pkg = setOf(year);
+  if (o === 'wd' && !pkg.has('wb')) return 'Wiskunde D kan alleen samen met wiskunde B';
+  if (year === 4 && s && s.betaLimit && BETA.includes(o)) {
+    if (slotsOf(4).some(t => t.betaLimit && t.id !== s.id && BETA.includes(valueOf(4, t)))) return 'Maximaal 1 bètavak in het vrije deel';
+  }
+  if (year === 5) {
+    const k4 = setOf(4);
+    if (o === 'wd' || o === 'ml') return null;
+    if (o === 'wb' && !k4.has('wb')) return 'Wiskunde B kan alleen als je het in klas 4 had';
+    if ((o === 'wa' || o === 'wc') && !(k4.has('wa') || k4.has('wb'))) return 'Kies eerst wiskunde in klas 4';
+    if (o !== 'wa' && o !== 'wc' && !k4.has(o)) return 'Niet gevolgd in klas 4';
+  }
+  return null;
+}
+
+// Fill klas 5 slots the student hasn't touched with the matching klas 4 choice
+function autoFill() {
+  const st = state[5];
+  const s4 = slotsOf(4);
+  const val4 = id => { const t = s4.find(x => x.id === id); return t ? valueOf(4, t) : null; };
+  const auto = slotsOf(5).filter(s => !s.fixed && !st.manual[s.id]);
+  for (const s of auto) delete st.picks[s.id];
+  for (const s of auto) {
+    const cands = s.id === 'v1' ? [val4('v1'), val4('v2')] : [val4(s.id)];
+    // never take a subject away from another klas 5 slot
+    const c = cands.find(c => c && s.options.includes(c) && !blockReason(5, c, s) && !slotsOf(5).some(t => valueOf(5, t) === c));
+    if (c) st.picks[s.id] = c;
+  }
+  if (!st.manualExtras) st.extras = state[4].extras.filter(o => FREE5.includes(o));
+}
+const isAuto = s => !s.fixed && !state[5].manual[s.id] && state[5].picks[s.id];
+
+// Drop picks that no longer fit; klas 5 depends on klas 4, so normalise 4 first
+function normalize() {
+  for (const year of [4, 5]) {
+    const slots = slotsOf(year);
+    const keep = {};
+    for (const s of slots) if (s.options && s.options.includes(state[year].picks[s.id])) keep[s.id] = state[year].picks[s.id];
+    state[year].picks = keep;
+    if (year === 5) autoFill();
+    const pool = year === 4 ? FREE4 : FREE5;
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const s of slots) {
+        const v = state[year].picks[s.id];
+        if (v && blockReason(year, v, s)) { delete state[year].picks[s.id]; changed = true; }
+      }
+      const ok = state[year].extras.filter(o => pool.includes(o) && !blockReason(year, o, null));
+      if (ok.length !== state[year].extras.length) { state[year].extras = ok; changed = true; }
+    }
+  }
+}
+
+function update() { normalize(); save(); render(); }
+
+function el(tag, attrs = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'class') n.className = v;
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+    else if (v === true) n.setAttribute(k, '');
+    else if (v !== false && v != null) n.setAttribute(k, v);
+  }
+  for (const k of kids.flat()) if (k != null) n.append(k);
+  return n;
+}
+const infoBtn = o => el('button', { class: 'info', type: 'button', 'aria-label': 'Over ' + S[o], title: 'Over ' + S[o], onclick: () => openInfo(o) }, 'i');
+
+function chipRow(options, isOn, reasonFor, onPick, label, noteFor = () => null) {
+  return el('div', { class: 'chips', role: 'group', 'aria-label': label },
+    options.map(o => {
+      const on = isOn(o);
+      const reason = on ? null : reasonFor(o);
+      const note = on || reason ? null : noteFor(o);
+      return el('span', { class: 'opt' + (on ? ' on' : '') + (reason ? ' off' : '') + (note ? ' moves' : '') },
+        el('button', { class: 'chip', type: 'button', 'aria-pressed': String(on), 'aria-disabled': reason ? 'true' : null,
+          title: reason || note || '', onclick: () => { if (!reason) onPick(o); } }, S[o]),
+        infoBtn(o));
+    }));
+}
+
+function renderProfiles() {
+  document.getElementById('profiles').replaceChildren(...Object.entries(PROFILES).map(([code, p]) =>
+    el('button', { class: 'profile', type: 'button', id: 'profile-' + code, 'aria-pressed': String(state.profile === code),
+      onclick: () => { state.profile = code; update(); } },
+      icon(code), el('span', { class: 'code' }, code), el('span', { class: 'name' }, p.name))));
+}
+
+function sectionsFor(year) {
+  const st = state[year];
+  const out = groupsFor(state.profile, year).map(g => {
+    const rows = g.slots.map(raw => {
+      const s = { ...raw, group: g.key };
+      let body;
+      if (s.fixed) {
+        body = el('div', { class: 'slot-body' }, el('span', { class: 'fixed' }, S[s.fixed], el('small', {}, '(verplicht)'), infoBtn(s.fixed)),
+          s.note ? el('p', { class: 'hint' }, s.note) : null);
+      } else {
+        body = el('div', { class: 'slot-body' }, chipRow(s.options, o => st.picks[s.id] === o, o => blockReason(year, o, s), o => {
+          if (st.picks[s.id] === o) delete st.picks[s.id]; else st.picks[s.id] = o;
+          if (year === 5) st.manual[s.id] = true;
+          update();
+        }, `${g.title}, ${s.label}, klas ${year}`, o => movesFrom(year, o, s)));
+      }
+      const auto = year === 5 && isAuto(s);
+      return el('div', { class: 'slot' }, el('div', { class: 'slot-label' }, s.label, auto ? el('span', { class: 'auto' }, 'uit klas 4') : null), body);
+    });
+    const filled = g.slots.filter(s => valueOf(year, s)).length;
+    return el('section', { class: 'section s-' + g.key },
+      el('div', { class: 'section-head' }, el('h3', {}, g.title), el('span', { class: 'n' }, filled + ' / ' + g.slots.length)),
+      el('div', {}, rows),
+      g.betaLimit ? el('p', { class: 'hint' }, 'Maximaal 1 bètavak (natuurkunde, scheikunde, biologie) in het vrije deel.') : null,
+      year === 5 && g.key === 'free' ? el('p', { class: 'hint' }, 'Eén vak naar keuze. Je kunt kiezen uit vakken die je in klas 4 volgde, of wiskunde D (met wiskunde B).') : null);
+  });
+  const pool = year === 4 ? FREE4 : FREE5;
+  out.push(el('section', { class: 'section s-extra' },
+    el('div', { class: 'section-head' }, el('h3', {}, 'Extra vak(ken)'), el('span', { class: 'n' }, `${st.extras.length} / ${MAX_EXTRAS}, indien gewenst`)),
+    el('div', { class: 'slot', style: 'grid-template-columns: minmax(0,1fr)' }, el('div', { class: 'slot-body' },
+      chipRow(pool, o => st.extras.includes(o), o => blockReason(year, o, null), o => {
+        st.extras = st.extras.includes(o) ? st.extras.filter(x => x !== o) : [...st.extras, o];
+        if (year === 5) st.manualExtras = true;
+        update();
+      }, `Extra vakken klas ${year}`),
+      el('p', { class: 'hint' }, `Een extra vak komt bovenop je ${TOTAL[year]} vakken. Je kunt er maximaal ${MAX_EXTRAS} kiezen. Overleg dit met je mentor of decaan.`),
+      st.extras.length >= 2 ? el('p', { class: 'warning' }, '2e extra vak alleen op advies van de school.') : null))));
+  return out;
+}
+
+function filledCount(year) { return slotsOf(year).filter(s => valueOf(year, s)).length; }
+
+// Let every klas 5 choice follow klas 4 again
+function followKlas4() {
+  state[5].manual = {};
+  state[5].manualExtras = false;
+  update();
+}
+
+function renderBuilder() {
+  const p = PROFILES[state.profile];
+  const four = filledCount(4), five = filledCount(5);
+  const anyManual = Object.keys(state[5].manual).length > 0 || state[5].manualExtras;
+  document.getElementById('builder').replaceChildren(
+    el('div', { class: 'year', id: 'klas4' },
+      el('div', { class: 'year-text' }, el('h2', {}, 'Klas 4'), el('p', {}, `${p.name}: 11 vakken.`)),
+      el('span', { class: 'tally' }, `${four} / 11`)),
+    ...sectionsFor(4),
+    el('div', { class: 'year', id: 'klas5' },
+      el('div', { class: 'year-text' }, el('h2', {}, 'Klas 5 en 6'), el('p', {}, '10 vakken. Frans of Duits is niet meer verplicht, maatschappijleer en het profielwerkstuk komen erbij en je houdt één vrij vak. Wiskunde D kan nu ook.')),
+      el('span', { class: 'tally' }, `${five} / 10`)),
+    el('div', { class: 'callout' },
+      el('p', {}, 'Klas 5 wordt automatisch ingevuld met je keuzes uit klas 4 (gemarkeerd met "uit klas 4"). Pas aan wat je anders wilt; die keuze blijft dan staan.'),
+      el('button', { class: 'btn small', type: 'button', id: 'follow-btn', disabled: !anyManual, onclick: followKlas4 }, 'Zet terug naar klas 4')),
+    ...sectionsFor(5));
+}
+
+function placement(year) {
+  const map = {};
+  for (const s of slotsOf(year)) { const v = valueOf(year, s); if (v) map[v] = s.group; }
+  for (const o of state[year].extras) map[o] = 'extra';
+  return map;
+}
+
+const isComplete = () => filledCount(4) === TOTAL[4] && filledCount(5) === TOTAL[5];
+const joinNl = list => list.join(', ').replace(/, ([^,]*)$/, ' en $1');
+
+function mailSubject() {
+  const who = [state.student.name.trim(), state.student.klas.trim()].filter(Boolean).join(', ');
+  return `Profielkeuze ${state.profile}${who ? ' - ' + who : ''}`;
+}
+
+function summaryText() {
+  const p = PROFILES[state.profile];
+  const name = state.student.name.trim(), klas = state.student.klas.trim();
+  const L = ['Beste decaan,', '', 'Hierbij geef ik mijn profiel- en vakkenkeuze door.', '',
+    `Naam:     ${name || '(vul je naam in)'}`, `Klas:     ${klas || '(vul je klas in)'}`, `Profiel:  ${p.name} (${state.profile})`];
+  for (const year of [4, 5]) {
+    L.push('', '', year === 4 ? `KLAS 4 (${TOTAL[4]} vakken)` : `KLAS 5 EN 6 (${TOTAL[5]} vakken)`, '');
+    for (const g of groupsFor(state.profile, year)) {
+      L.push(g.title);
+      for (const s of g.slots) L.push('  - ' + (valueOf(year, s) ? S[valueOf(year, s)] : '(nog kiezen)'));
+    }
+    const ex = state[year].extras;
+    L.push('Extra vak(ken)');
+    if (!ex.length) L.push('  - geen');
+    ex.forEach((o, i) => L.push('  - ' + S[o] + (i === 1 ? '  (2e extra vak, alleen op advies van de school)' : '')));
+  }
+  const a = placement(4), b = placement(5);
+  const dropped = ORDER.filter(o => a[o] && !b[o]).map(o => S[o]);
+  const added = ORDER.filter(o => !a[o] && b[o]).map(o => S[o]);
+  L.push('', '', 'OVERGANG KLAS 4 NAAR KLAS 5', '');
+  L.push(`Stopt na klas 4:  ${dropped.length ? joinNl(dropped) : '-'}`);
+  L.push(`Nieuw in klas 5:  ${added.length ? joinNl(added) : '-'}`);
+  L.push('', 'Met vriendelijke groet,', name);
+  return L.join('\n');
+}
+
+function renderExport() {
+  const ok = isComplete(), named = !!(state.student.name.trim() && state.student.klas.trim());
+  const ready = ok && named;
+  document.getElementById('mail-preview').textContent = summaryText();
+  document.getElementById('mail-subject').textContent = mailSubject();
+  const mailBtn = document.getElementById('mail-btn');
+  mailBtn.setAttribute('href', `mailto:${encodeURIComponent(MAIL_TO)}?subject=${encodeURIComponent(mailSubject())}&body=${encodeURIComponent(summaryText().replace(/\n/g, '\r\n'))}`);
+  mailBtn.classList.toggle('disabled', !ready);
+  mailBtn.setAttribute('aria-disabled', String(!ready));
+  document.getElementById('copy-btn').disabled = !ready;
+  const st = document.getElementById('export-state');
+  st.textContent = !ok ? `Maak eerst je pakket compleet (klas 4: ${filledCount(4)}/${TOTAL[4]}, klas 5: ${filledCount(5)}/${TOTAL[5]}).`
+    : !named ? 'Vul je naam en klas in.' : 'Klaar om te versturen.';
+  st.className = 'export-state ' + (ready ? 'ready' : 'todo');
+}
+
+function initExport() {
+  const name = document.getElementById('student-name'), klas = document.getElementById('student-klas');
+  name.value = state.student.name; klas.value = state.student.klas;
+  const onInput = () => { state.student = { name: name.value, klas: klas.value }; save(); renderExport(); };
+  name.addEventListener('input', onInput);
+  klas.addEventListener('input', onInput);
+  document.getElementById('mail-btn').addEventListener('click', e => {
+    if (e.currentTarget.getAttribute('aria-disabled') === 'true') e.preventDefault();
+  });
+  const status = document.getElementById('copy-status');
+  document.getElementById('copy-btn').addEventListener('click', async () => {
+    const text = `Onderwerp: ${mailSubject()}\n\n${summaryText()}`;
+    try { await navigator.clipboard.writeText(text); status.textContent = 'Gekopieerd. Plak de tekst in een nieuwe mail.'; }
+    catch (e) {
+      const r = document.createRange(); r.selectNodeContents(document.getElementById('mail-preview'));
+      const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      status.textContent = 'Kopiëren lukte niet automatisch. De tekst is geselecteerd: druk op Ctrl+C (of Cmd+C).';
+    }
+  });
+}
+
+function tallyBox(year) {
+  const n = filledCount(year), total = TOTAL[year], done = n === total;
+  return el('div', { class: 'tally-box' },
+    el('span', { class: 'lbl' }, year === 4 ? 'Klas 4' : 'Klas 5 en 6'),
+    el('span', { class: 'num' }, String(n), el('small', {}, ` / ${total}`)),
+    el('div', { class: 'meter', style: `grid-template-columns: repeat(${total}, 1fr)`, 'aria-hidden': 'true' },
+      Array.from({ length: total }, (_, i) => el('span', { class: i < n ? 'on' : '' }))),
+    el('span', { class: 'pill ' + (done ? 'ok' : 'todo') }, done ? 'Compleet' : `Nog ${total - n} open`));
+}
+
+function renderRoute() {
+  const p = PROFILES[state.profile];
+  const a = placement(4), b = placement(5);
+  const subjects = ORDER.filter(o => a[o] || b[o]);
+  const mark = (pl, o) => pl[o] ? el('span', { class: 'mark ' + pl[o], title: MARK_LABEL[pl[o]], 'aria-label': MARK_LABEL[pl[o]] }) : el('span', { class: 'mark none', 'aria-label': 'Niet in pakket' }, '–');
+  const rows = subjects.map(o => {
+    let tag = null;
+    if (a[o] && !b[o] && filledCount(5) > 0) tag = el('span', { class: 'tag drop' }, 'stopt na klas 4');
+    else if (!a[o] && b[o]) tag = el('span', { class: 'tag new' }, 'nieuw in klas 5');
+    else if (b[o] === 'extra') tag = el('span', { class: 'tag extra' }, 'als extra vak');
+    return el('tr', {},
+      el('td', {}, el('button', { class: 'subj', type: 'button', onclick: () => openInfo(o) }, S[o]), tag),
+      el('td', { class: 'c' }, mark(a, o)), el('td', { class: 'c' }, mark(b, o)));
+  });
+
+  const notes = [];
+  const open4 = 11 - filledCount(4), open5 = 10 - filledCount(5);
+  if (open4) notes.push(el('li', { class: 'warn' }, `Klas 4: nog ${open4} keuze${open4 === 1 ? '' : 's'} open.`));
+  if (!open4 && open5) notes.push(el('li', { class: 'warn' }, `Klas 5: nog ${open5} keuze${open5 === 1 ? '' : 's'} open.`));
+  const k5 = setOf(5);
+  if (k5.has('wc')) notes.push(el('li', {}, 'Met wiskunde C kun je niet naar elke studie. Bekijk de toelatingseisen.'));
+  if (state.profile === 'NG' && filledCount(5) === 10 && !k5.has('na')) notes.push(el('li', {}, 'Geneeskunde vraagt ook natuurkunde.'));
+  if (state.profile === 'NT' && filledCount(5) === 10 && !k5.has('bi')) notes.push(el('li', {}, 'Geneeskunde en biomedische studies vragen ook biologie.'));
+  const dropped = Object.keys(a).filter(o => !b[o]);
+  if (filledCount(5) === 10 && dropped.length) notes.push(el('li', {}, `Na klas 4 stop je met ${dropped.map(o => S[o].toLowerCase()).join(', ').replace(/, ([^,]*)$/, ' en $1')}.`));
+
+  if (state[4].extras.length >= 2 || state[5].extras.length >= 2) notes.push(el('li', { class: 'warn' }, '2e extra vak alleen op advies van de school.'));
+  const exportBtn = el('a', { class: 'btn', href: '#doorgeven', id: 'to-export' }, 'Keuze doorgeven');
+  const resetBtn = el('button', { class: 'btn ghost', type: 'button', id: 'reset-btn', onclick: () => {
+    state = { profile: state.profile, student: state.student, 4: blank(), 5: blank() }; update();
+  } }, 'Begin opnieuw');
+
+  document.getElementById('route').replaceChildren(
+    el('div', { class: 'route-head' }, icon(state.profile), el('div', {}, el('div', { class: 'eyebrow' }, `${state.profile} · ${p.name}`), el('h2', {}, 'Jouw route'))),
+    el('div', { class: 'tallies' }, tallyBox(4), tallyBox(5)),
+    el('div', { class: 'table-wrap' }, el('table', { class: 'cmp' },
+      el('thead', {}, el('tr', {}, el('th', {}, 'Vak'), el('th', { class: 'c' }, 'Kl 4'), el('th', { class: 'c' }, 'Kl 5-6'))),
+      el('tbody', {}, rows))),
+    el('div', { class: 'legend' }, Object.entries(MARK_LABEL).map(([k, v]) => el('span', {}, el('span', { class: 'mark ' + k }), v))),
+    notes.length ? el('ul', { class: 'notes' }, notes) : null,
+    el('div', { class: 'actions' }, exportBtn, resetBtn));
+
+  document.getElementById('bar').replaceChildren(
+    el('span', {}, 'Klas 4 ', el('b', {}, `${filledCount(4)}/11`), ' · Klas 5 ', el('b', {}, `${filledCount(5)}/10`)),
+    el('button', { class: 'btn small', type: 'button', onclick: () => document.getElementById('route').scrollIntoView({ behavior: 'smooth' }) }, 'Bekijk route'));
+}
+
+// Info panel
+let lastFocus = null;
+function openInfo(o) {
+  const d = INFO[o];
+  const where = [4, 5].map(y => { const pl = placement(y)[o]; return pl ? `klas ${y === 4 ? '4' : '5-6'}: ${MARK_LABEL[pl].toLowerCase()}` : null; }).filter(Boolean);
+  lastFocus = document.activeElement;
+  const scrim = document.getElementById('scrim');
+  const close = el('button', { class: 'btn ghost small', type: 'button', id: 'info-close', onclick: closeInfo }, 'Sluiten');
+  scrim.replaceChildren(el('div', { class: 'panel', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'info-title' },
+    el('div', { class: 'panel-head' }, el('div', {}, el('div', { class: 'eyebrow' }, 'Over dit vak'), el('h2', { id: 'info-title' }, S[o])), close),
+    el('p', {}, d.about),
+    where.length ? el('div', { class: 'in-pkg' }, 'In jouw pakket: ' + where.join(' · ')) : null,
+    el('dl', { class: 'facts' }, el('dt', {}, 'Examen'), el('dd', {}, d.exam)),
+    el('div', {}, el('h3', {}, 'Wat je leert'), el('ul', {}, d.topics.map(t => el('li', {}, t)))),
+    el('div', {}, el('h3', {}, 'Vervolgstudie'), el('p', {}, d.next)),
+    el('p', { class: 'src' }, 'Algemene informatie op basis van de landelijke vwo-examenprogramma\'s. Actuele syllabi staan op ',
+      el('a', { href: 'https://www.examenblad.nl', target: '_blank', rel: 'noopener' }, 'examenblad.nl'),
+      ', toelatingseisen van studies op ',
+      el('a', { href: 'https://www.studiekeuze123.nl', target: '_blank', rel: 'noopener' }, 'studiekeuze123.nl'),
+      '. Hoe het Haganum het vak invult, hoor je van je docent.')));
+  scrim.hidden = false;
+  close.focus();
+}
+function closeInfo() {
+  document.getElementById('scrim').hidden = true;
+  if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
+}
+document.getElementById('scrim').addEventListener('click', e => { if (e.target.id === 'scrim') closeInfo(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.getElementById('scrim').hidden) closeInfo(); });
+
+function render() { renderProfiles(); renderBuilder(); renderRoute(); renderExport(); }
+normalize();
+initExport();
+render();
+</script>
+</body>
+</html>
