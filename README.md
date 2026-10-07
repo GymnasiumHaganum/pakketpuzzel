@@ -8,7 +8,30 @@ Het is één statische pagina (`index.html`) zonder build-stap of server.
 
 Open `index.html` in een browser. Om de tool online te zetten, kun je het bestand op elke statische host plaatsen, zoals GitHub Pages, Netlify of de webserver van school.
 
-Keuzes worden alleen in de browser van de leerling bewaard (`localStorage`) en nergens naartoe gestuurd.
+### Met Docker
+
+De `Dockerfile` serveert de pagina met nginx (Alpine, draait niet als root) op poort 8080:
+
+```bash
+docker compose up -d --build
+```
+
+Of zonder Compose:
+
+```bash
+docker build -t vakkenpakket .
+docker run -d -p 8080:8080 --name vakkenpakket vakkenpakket
+```
+
+`docker-compose.yaml` draait de container met een alleen-lezen bestandssysteem, zonder extra rechten, en start hem automatisch opnieuw. Open daarna http://localhost:8080. De nginx-instellingen staan in `nginx.conf`: compressie, beveiligingsheaders en een Content-Security-Policy die alleen Google Fonts als externe bron toestaat.
+
+### Opslag en export
+
+Alle keuzes, plus naam en klas, worden na elke wijziging automatisch in de browser van de leerling bewaard (`localStorage`) en nergens naartoe gestuurd. Bovenaan staat "Automatisch opgeslagen"; lukt opslaan niet (bijvoorbeeld in een privévenster), dan staat daar een melding. De knop "Begin opnieuw" in het overzicht rechts wist na een tweede klik alle keuzes, naam en klas. De gekozen kleurinstelling blijft dan bewaard.
+
+Keuzes die nog open staan, zijn geel gemarkeerd en hebben het label "Nog kiezen". De eerstvolgende keuze pulseert.
+
+Licht of donker thema volgt automatisch het apparaat. Bovenaan de pagina kan de leerling dat overschrijven met Auto, Licht of Donker. De pagina kleurt mee met het gekozen profiel.
 
 Klas 5 wordt automatisch ingevuld met de keuzes uit klas 4. Wat de leerling in klas 5 zelf aanpast, blijft staan. De knop "Zet terug naar klas 4" laat alles weer de keuzes uit klas 4 volgen.
 
