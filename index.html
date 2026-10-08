@@ -38,6 +38,11 @@
   --ok: #0e8a43;
   --warn: #b25600;
   --todo: #ffd23f;
+  --mk-common: #8b7cf6;
+  --mk-req: #f2b600;
+  --mk-choice: #1fbf68;
+  --mk-free: #2ba8f0;
+  --mk-extra: #f05a9d;
   --todo-ink: #3a2c00;
   --bad: #c81e4b;
   --chip-bg: #ffffff;
@@ -54,7 +59,7 @@
     --c-cm: #ff6fab; --c-em: #ffad4d; --c-ng: #3fdc87; --c-nt: #8f88ff;
     --ink-cm: #2a0716; --ink-em: #2b1600; --ink-ng: #04210f; --ink-nt: #140f3a;
     --sec-common: #2e2858; --sec-req: #4c4013; --sec-choice: #1b4a31; --sec-free: #173e5c; --sec-extra: #50223a;
-    --ok: #5fe39b; --warn: #ffbe5c; --todo: #e9bc1c; --todo-ink: #2a2000; --bad: #ff7b9c; --chip-bg: #27214a; --chip-off: #6c6596;
+    --ok: #5fe39b; --warn: #ffbe5c; --todo: #e9bc1c; --todo-ink: #2a2000; --mk-common: #a99cff; --mk-req: #ffd23f; --mk-choice: #4ade80; --mk-free: #5cc8ff; --mk-extra: #ff8ac0; --bad: #ff7b9c; --chip-bg: #27214a; --chip-off: #6c6596;
     --shadow: rgba(0, 0, 0, 0.4); --scrim: rgba(0, 0, 0, 0.6);
     color-scheme: dark;
   }
@@ -65,7 +70,7 @@
   --c-cm: #ff6fab; --c-em: #ffad4d; --c-ng: #3fdc87; --c-nt: #8f88ff;
   --ink-cm: #2a0716; --ink-em: #2b1600; --ink-ng: #04210f; --ink-nt: #140f3a;
   --sec-common: #2e2858; --sec-req: #4c4013; --sec-choice: #1b4a31; --sec-free: #173e5c; --sec-extra: #50223a;
-  --ok: #5fe39b; --warn: #ffbe5c; --todo: #e9bc1c; --todo-ink: #2a2000; --bad: #ff7b9c; --chip-bg: #27214a; --chip-off: #6c6596;
+  --ok: #5fe39b; --warn: #ffbe5c; --todo: #e9bc1c; --todo-ink: #2a2000; --mk-common: #a99cff; --mk-req: #ffd23f; --mk-choice: #4ade80; --mk-free: #5cc8ff; --mk-extra: #ff8ac0; --bad: #ff7b9c; --chip-bg: #27214a; --chip-off: #6c6596;
   --shadow: rgba(0, 0, 0, 0.4); --scrim: rgba(0, 0, 0, 0.6);
   color-scheme: dark;
 }
@@ -184,6 +189,8 @@ button { font: inherit; color: inherit; }
 .meter { display: grid; gap: 3px; }
 .meter span { height: 8px; border-radius: 4px; background: color-mix(in srgb, var(--accent) 18%, var(--surface)); }
 .meter span.on { background: var(--accent); }
+.meter span.extra { background: var(--mk-extra); }
+.tally-box .num .plus { display: inline-block; margin-left: 6px; vertical-align: middle; font-family: var(--font-body); font-size: 0.75rem; font-weight: 800; color: var(--fg); background: var(--sec-extra); padding: 2px 8px; border-radius: 999px; }
 .pill { align-self: start; font-size: 0.75rem; font-weight: 800; padding: 2px 10px; border-radius: 999px; }
 .pill.ok { color: var(--surface); background: var(--ok); }
 .pill.todo { color: var(--warn); border: 2px solid currentColor; }
@@ -191,17 +198,17 @@ button { font: inherit; color: inherit; }
 .table-wrap { overflow-x: auto; }
 table.cmp { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
 .cmp th { text-align: left; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 800; padding: 0 6px 6px; border-bottom: 2px solid var(--line); }
-.cmp th.c, .cmp td.c { text-align: center; width: 54px; }
+.cmp th.c, .cmp td.c { text-align: center; width: 64px; white-space: nowrap; }
 .cmp td { padding: 5px 6px; border-bottom: 1px dashed var(--line); vertical-align: middle; }
 .cmp tr:last-child td { border-bottom: 0; }
 .cmp .subj { background: none; border: 0; padding: 0; cursor: pointer; text-align: left; font-weight: 700; text-decoration: underline; text-decoration-color: var(--line); text-decoration-thickness: 2px; text-underline-offset: 3px; }
 .cmp .subj:hover { text-decoration-color: var(--accent); }
 .cmp .tag { display: block; font-size: 0.74rem; font-weight: 800; }
 .tag.drop { color: var(--bad); } .tag.new { color: var(--ok); } .tag.extra { color: var(--muted); }
-.mark { display: inline-block; width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--line); vertical-align: middle; }
+.mark { display: inline-block; width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; }
 .mark.none { border: 0; box-shadow: none; width: auto; height: auto; color: var(--chip-off); }
-.mark.common { background: var(--sec-common); } .mark.req { background: var(--sec-req); } .mark.choice { background: var(--sec-choice); }
-.mark.free { background: var(--sec-free); } .mark.extra { background: var(--sec-extra); }
+.mark.common { background: var(--mk-common); } .mark.req { background: var(--mk-req); } .mark.choice { background: var(--mk-choice); }
+.mark.free { background: var(--mk-free); } .mark.extra { background: var(--mk-extra); }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 0.78rem; color: var(--muted); }
 .legend span { display: inline-flex; gap: 5px; align-items: center; }
 .notes { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 0.88rem; color: var(--muted); }
@@ -241,6 +248,10 @@ a.btn { text-decoration: none; display: inline-block; }
 .export p { margin: 0; color: var(--muted); max-width: 60ch; }
 .fields { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 10px; }
 .fields label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; font-weight: 800; color: var(--muted); }
+.fields label.wide { grid-column: 1 / -1; }
+.fields .opt-label { font-weight: 600; }
+.fields textarea { font: inherit; font-weight: 600; color: var(--fg); background: var(--bg); border: 2px solid var(--line); border-radius: 12px; padding: 9px 12px; min-width: 0; resize: vertical; min-height: 80px; }
+.fields textarea:focus { border-color: var(--accent); outline: none; }
 .fields input { font: inherit; font-weight: 600; color: var(--fg); background: var(--bg); border: 2px solid var(--line); border-radius: 12px; padding: 9px 12px; min-width: 0; }
 .fields input:focus { border-color: var(--accent); outline: none; }
 .export p.export-state { font-weight: 800; font-size: 0.92rem; }
@@ -358,6 +369,8 @@ footer { margin-top: 36px; color: var(--muted); font-size: 0.82rem; max-width: 8
       <div class="fields">
         <label for="student-name">Naam<input id="student-name" type="text" autocomplete="name" placeholder="Voor- en achternaam"></label>
         <label for="student-klas">Klas<input id="student-klas" type="text" placeholder="bijv. 3B" maxlength="10"></label>
+        <label for="student-note" class="wide"><span>Opmerkingen of vragen <span class="opt-label">(niet verplicht)</span></span>
+          <textarea id="student-note" rows="3" maxlength="1000" placeholder="Bijvoorbeeld: ik twijfel tussen Frans en Duits, of ik wil graag een gesprek over een extra vak."></textarea></label>
       </div>
       <p class="export-state todo" id="export-state"></p>
       <div class="actions">
@@ -481,11 +494,11 @@ function groupsFor(code, year) {
 const STORE = 'profielkeuze-route-v2';
 // manual: klas 5 slots the student set or cleared; the rest follow klas 4 automatically
 const blank = () => ({ picks: {}, extras: [], manual: {}, manualExtras: false });
-let state = { profile: 'NT', student: { name: '', klas: '' }, 4: blank(), 5: blank() };
+let state = { profile: 'NT', student: { name: '', klas: '', note: '' }, 4: blank(), 5: blank() };
 try {
   const saved = JSON.parse(localStorage.getItem(STORE) || 'null');
   if (saved && PROFILES[saved.profile]) state = {
-    profile: saved.profile, student: { name: '', klas: '', ...saved.student },
+    profile: saved.profile, student: { name: '', klas: '', note: '', ...saved.student },
     4: { ...blank(), ...saved[4] }, 5: { ...blank(), ...saved[5] }
   };
 } catch (e) { /* storage unavailable */ }
@@ -713,6 +726,8 @@ function summaryText() {
   L.push('', '', 'OVERGANG KLAS 4 NAAR KLAS 5', '');
   L.push(`Stopt na klas 4:  ${dropped.length ? joinNl(dropped) : '-'}`);
   L.push(`Nieuw in klas 5:  ${added.length ? joinNl(added) : '-'}`);
+  const note = (state.student.note || '').trim();
+  if (note) L.push('', '', 'OPMERKINGEN OF VRAGEN', '', note);
   L.push('', 'Met vriendelijke groet,', name);
   return L.join('\n');
 }
@@ -750,11 +765,10 @@ function closeExport() {
 function initExport() {
   document.getElementById('export-close').addEventListener('click', closeExport);
   document.getElementById('export-scrim').addEventListener('click', e => { if (e.target.id === 'export-scrim') closeExport(); });
-  const name = document.getElementById('student-name'), klas = document.getElementById('student-klas');
-  name.value = state.student.name; klas.value = state.student.klas;
-  const onInput = () => { state.student = { name: name.value, klas: klas.value }; save(); renderExport(); };
-  name.addEventListener('input', onInput);
-  klas.addEventListener('input', onInput);
+  const name = document.getElementById('student-name'), klas = document.getElementById('student-klas'), note = document.getElementById('student-note');
+  name.value = state.student.name; klas.value = state.student.klas; note.value = state.student.note;
+  const onInput = () => { state.student = { name: name.value, klas: klas.value, note: note.value }; save(); renderExport(); };
+  for (const f of [name, klas, note]) f.addEventListener('input', onInput);
   document.getElementById('mail-btn').addEventListener('click', e => {
     if (e.currentTarget.getAttribute('aria-disabled') === 'true') e.preventDefault();
   });
@@ -771,12 +785,13 @@ function initExport() {
 }
 
 function tallyBox(year) {
-  const n = filledCount(year), total = TOTAL[year], done = n === total;
+  const n = filledCount(year), total = TOTAL[year], done = n === total, x = state[year].extras.length;
   return el('div', { class: 'tally-box' },
     el('span', { class: 'lbl' }, year === 4 ? 'Klas 4' : 'Klas 5 en 6'),
-    el('span', { class: 'num' }, String(n), el('small', {}, ` / ${total}`)),
-    el('div', { class: 'meter', style: `grid-template-columns: repeat(${total}, 1fr)`, 'aria-hidden': 'true' },
-      Array.from({ length: total }, (_, i) => el('span', { class: i < n ? 'on' : '' }))),
+    el('span', { class: 'num' }, String(n), el('small', {}, ` / ${total}`),
+      x ? el('span', { class: 'plus', title: state[year].extras.map(o => S[o]).join(', ') }, `+${x} extra`) : null),
+    el('div', { class: 'meter', style: `grid-template-columns: repeat(${total + x}, 1fr)`, 'aria-hidden': 'true' },
+      Array.from({ length: total + x }, (_, i) => el('span', { class: i >= total ? 'extra' : i < n ? 'on' : '' }))),
     el('span', { class: 'pill ' + (done ? 'ok' : 'todo') }, done ? 'Helemaal rond!' : `Nog ${total - n} open`));
 }
 
@@ -918,7 +933,8 @@ function onReset(e) {
   }
   clearTimeout(resetArmed); resetArmed = null;
   try { localStorage.removeItem(STORE); } catch (err) {}
-  state = { profile: 'NT', student: { name: '', klas: '' }, 4: blank(), 5: blank() };
+  state = { profile: 'NT', student: { name: '', klas: '', note: '' }, 4: blank(), 5: blank() };
+  document.getElementById('student-note').value = '';
   document.getElementById('student-name').value = '';
   document.getElementById('student-klas').value = '';
   wasComplete = null;
