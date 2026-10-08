@@ -1,6 +1,8 @@
-# VakkenPakket
+# Pakketpuzzel
 
-Webtool waarmee leerlingen van klas 3 van gymnasium Haganum hun vakkenpakket samenstellen: eerst het profiel en de vakken voor klas 4, daarna de definitieve keuze voor klas 5 en 6. De tool laat live zien welke vakken doorlopen, welke na klas 4 afvallen en welke in klas 5 nieuw zijn. Bij elk vak staat achtergrondinformatie.
+*Bouw je vakkenpakket voor klas 4 t/m 6.*
+
+Pakketpuzzel is een webtool waarmee leerlingen van klas 3 van gymnasium Haganum hun vakkenpakket samenstellen: eerst het profiel en de vakken voor klas 4, daarna de definitieve keuze voor klas 5 en 6. De tool laat live zien welke vakken doorlopen, welke na klas 4 afvallen en welke in klas 5 nieuw zijn. Bij elk vak staat achtergrondinformatie.
 
 Het is één statische pagina (`index.html`) zonder build-stap of server.
 
